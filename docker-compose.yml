@@ -1,0 +1,63 @@
+version: '1'
+
+volumes:
+  db_data:
+  gem_cache:
+  shared_data:
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - shared_data:/var/shared
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: fetch_development
+    ports:
+      - "5432:5432"
+
+  web:
+    container_name: fetch-backend
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/var/app
+      - shared_data:/var/shared
+      - gem_cache:/usr/local/bundle/gems
+    ports:
+      - "8000:8000"
+    stdin_open: true
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://postgres:password@db:5432/fetch_development
+      RAILS_ENV: development
+    entrypoint: development-entrypoint.sh
+    command: ['rails', 'server', '-b', '0.0.0.0']
+    env_file:
+      - .env.development
+
+  test:
+    container_name: fetch-test
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/var/app
+      - shared_data:/var/shared
+      - gem_cache:/usr/local/bundle/gems
+    ports:
+      - "8001:8001"
+    stdin_open: true
+    depends_on:
+      - db
+    command: ["rails", "-v"]
+    environment:
+      DATABASE_URL: postgres://postgres:password@db:5432/fetch_test
+      RAILS_ENV: test
+    entrypoint: test-entrypoint.sh
+    env_file:
+      - .env.test
