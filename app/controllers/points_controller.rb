@@ -24,7 +24,9 @@ class PointsController < ApplicationController
     end
 
     def balance
+        response = Transaction.balance_by_payers(@wallet)
 
+        render json: response, status: :ok
     end
 
     private

@@ -40,6 +40,15 @@ class Transaction < ApplicationRecord
         spent_points_by_payer.map { |key, value| {payer: key, points: -value} }
     end
 
+    def self.balance_by_payers(wallet)
+        wallet.transactions
+            .where(status: :completed)
+            .group(:payer)
+            .sum(:available_points)
+            .order(payer: :asc)
+            .count
+    end
+
     private
     def process
         if self.timestamp.future?
