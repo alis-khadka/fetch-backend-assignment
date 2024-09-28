@@ -6,5 +6,15 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  root "points#home"
+
+  # Endpoints for the points_controller
+  post 'add', to: 'points#add', as: :points_add
+  post 'spend', to: 'points#spend', as: :points_spend  
+  get 'balance', to: 'points#balance', as: :points_balance
+
+  # Endpoints for the points_controller with wallet_id parameter
+  post ':wallet_id/add', to: 'points#add', as: :points_add_with_id
+  post ':walled_id/spend', to: 'points#spend', as: :points_spend_with_id
+  get ':walled_id/balance', to: 'points#balance', as: :points_balance_with_id
 end

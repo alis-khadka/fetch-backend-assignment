@@ -1,5 +1,9 @@
 class PointsController < ApplicationController
-    before_action :set_wallet
+    before_action :set_wallet, except: :home
+
+    def home
+        render json: { message: 'Welcome to wallet api.' }, status: :ok
+    end
 
     def add
         @transaction = @wallet.transactions.new(transaction_params)
@@ -15,7 +19,7 @@ class PointsController < ApplicationController
         points_to_spend = spend_points_params[:points].to_i
 
         if points > @wallet.balance
-            render plain: "Insufficient points in the wallet.", status: :
+            render plain: "Insufficient points in the wallet.", status: :bad_request
         else
             response = Transaction.spend(points_to_spend, @wallet)
 
