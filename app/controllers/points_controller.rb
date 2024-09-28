@@ -12,6 +12,15 @@ class PointsController < ApplicationController
     end
 
     def spend
+        points_to_spend = spend_points_params[:points].to_i
+
+        if points > @wallet.balance
+            render plain: "Insufficient points in the wallet.", status: :
+        else
+            response = Transaction.spend(points_to_spend, @wallet)
+
+            render json: response, status: :ok
+        end
     end
 
     def balance
@@ -25,5 +34,9 @@ class PointsController < ApplicationController
 
     def transaction_params
         params.permit(:payer, :points, :timestamp)
+    end
+
+    def spend_points_params
+        params.permit(:points)
     end
 end

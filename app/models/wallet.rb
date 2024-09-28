@@ -4,7 +4,7 @@ class Wallet < ApplicationRecord
     def update_total_balance
         new_total = self.transactions
             .where(status: :completed)
-            .sum(:points)
+            .sum(:availabe_points)
 
         self.update!
     end
