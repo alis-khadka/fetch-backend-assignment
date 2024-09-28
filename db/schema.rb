@@ -18,7 +18,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_28_034634) do
     t.bigint "wallet_id", null: false
     t.string "payer"
     t.bigint "points"
-    t.bigint "availabe_points"
+    t.bigint "available_points"
     t.integer "status", default: 0
     t.datetime "timestamp", null: false
     t.datetime "created_at", null: false

@@ -44,9 +44,9 @@ class Transaction < ApplicationRecord
         wallet.transactions
             .where(status: :completed)
             .group(:payer)
-            .sum(:available_points)
             .order(payer: :asc)
-            .count
+            .select(:payer, 'SUM(available_points)')
+            .size
     end
 
     private
