@@ -19,6 +19,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_28_034634) do
     t.string "payer"
     t.bigint "points"
     t.integer "status", default: 0
+    t.datetime "timestamp", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["wallet_id"], name: "index_transactions_on_wallet_id"
