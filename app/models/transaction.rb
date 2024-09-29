@@ -3,16 +3,10 @@ class Transaction < ApplicationRecord
 
     before_create :update_available_points
 
-    after_create :process
-    after_commit :update_wallet_balance, on: [:create, :update]
-    after_update :check_available_points
+    after_create_commit :process
+    after_commit :check_available_points_and_update_wallet_balance, on: [:create, :update]
 
-    enum status: {
-        pending: 0,
-        completed: 1,
-        failed: 2,
-        spent: 3
-    }
+    enum :status, { pending: 0, completed: 1, failed: 2, spent: 3 }
 
     def self.spend(points, wallet)
         completed_transactions = wallet.transactions.where(status: :completed).order(timestamp: :asc)
@@ -24,8 +18,8 @@ class Transaction < ApplicationRecord
             completed_transactions.each do |transaction|
                 break if points_available <=0
 
-                deduction = [points_available, transaction.availabe_points].min
-                transaction.update!(availabe_points: transaction.availabe_points - deduction)
+                deduction = [points_available, transaction.available_points].min
+                transaction.update(available_points: transaction.available_points - deduction)
 
                 points_available -= deduction
 
@@ -45,8 +39,8 @@ class Transaction < ApplicationRecord
             .where(status: :completed)
             .group(:payer)
             .order(payer: :asc)
-            .select(:payer, 'SUM(available_points)')
-            .size
+            .pluck(:payer, 'SUM(available_points)::int')
+            .to_h
     end
 
     private
@@ -64,21 +58,19 @@ class Transaction < ApplicationRecord
         end
     end
 
-    def update_wallet_balance
-        if saved_change_to_status? && completed?
+    def check_available_points_and_update_wallet_balance
+        if saved_change_to_attribute?('available_points') || (saved_change_to_attribute?('status') && completed?)
             ActiveRecord::Base.transaction do
                 self.wallet.update_total_balance
             end
         end
+
+        if saved_change_to_attribute?('available_points') && self.available_points <= 0
+            self.spent!
+        end
     end
 
     def update_available_points
-        self.availabe_points = self.points
-    end
-
-    def check_available_points
-        if saved_change_to_available_points? && self.availabe_points <= 0
-            self.spent!
-        end
+        self.available_points = self.points
     end
 end

@@ -18,7 +18,7 @@ class PointsController < ApplicationController
     def spend
         points_to_spend = spend_points_params[:points].to_i
 
-        if points > @wallet.balance
+        if points_to_spend > @wallet.balance
             render plain: "Insufficient points in the wallet.", status: :bad_request
         else
             response = Transaction.spend(points_to_spend, @wallet)
