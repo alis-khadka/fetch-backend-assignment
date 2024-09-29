@@ -54,13 +54,15 @@ Welcome to **Wallet API**.
 **Wallet API** has 3 different API endpoints.  
 
  1.  POST /add  
-		Sample request body:   
-		```JSON
+		Sample request body:  
+ 
+		```json
 		{ "payer": "HARRY", "points": 500, "timestamp" : "2020-11-02T14:00:00Z" }
 		```  
  2.  POST /spend  
-		 Sample request body:  
-		 ```JSON
+		 Sample request body:   
+
+		 ```json
 		 { "points": 5000 }
 		 ```  
  3.  GET /balance  
