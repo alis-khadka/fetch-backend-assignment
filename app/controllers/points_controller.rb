@@ -4,7 +4,7 @@ class PointsController < ApplicationController
     before_action :validate_spend_points_params, only: :spend
 
     def home
-        render json: { message: 'Welcome to wallet api.' }, status: :ok
+        render json: { message: "Welcome to wallet api." }, status: :ok
     end
 
     def add
@@ -69,17 +69,17 @@ class PointsController < ApplicationController
             # Checking if points is negative or zero
             raise TransactionErrors::NegativeOrZeroPointsValue if Integer(transaction_params[:points]) <= 0
         rescue Date::Error => error
-            render plain: 'Invalid timestamp.', status: :bad_request and return
+            render plain: "Invalid timestamp.", status: :bad_request and return
         rescue TransactionErrors::TimestampMissing
-            render plain: 'Timestamp key is missing.', status: :bad_request and return
+            render plain: "Timestamp key is missing.", status: :bad_request and return
         rescue TransactionErrors::PayerMissingOrEmpty
-            render plain: 'Payer is missing or empty.', status: :bad_request and return
+            render plain: "Payer is missing or empty.", status: :bad_request and return
         rescue TransactionErrors::PointsMissing
-            render plain: 'Points is missing.', status: :bad_request and return
+            render plain: "Points is missing.", status: :bad_request and return
         rescue TypeError, ArgumentError
-            render plain: 'Points value should be integer.', status: :bad_request and return
+            render plain: "Points value should be integer.", status: :bad_request and return
         rescue TransactionErrors::NegativeOrZeroPointsValue
-            render plain: 'Points value cannot be negative or zero.', status: :bad_request and return
+            render plain: "Points value cannot be negative or zero.", status: :bad_request and return
         end
     end
 
@@ -94,11 +94,11 @@ class PointsController < ApplicationController
             # Checking if points is negative or zero
             raise TransactionErrors::NegativeOrZeroPointsValue if Integer(spend_points_params[:points]) <= 0
         rescue TransactionErrors::PointsMissing
-            render plain: 'Points is missing.', status: :bad_request and return
+            render plain: "Points is missing.", status: :bad_request and return
         rescue TypeError, ArgumentError
-            render plain: 'Points value should be integer.', status: :bad_request and return
+            render plain: "Points value should be integer.", status: :bad_request and return
         rescue TransactionErrors::NegativeOrZeroPointsValue
-            render plain: 'Points value cannot be negative or zero.', status: :bad_request and return
+            render plain: "Points value cannot be negative or zero.", status: :bad_request and return
         end
     end
 end

@@ -43,14 +43,14 @@ class TransactionTest < ActiveSupport::TestCase
 
     # transaction_one and transaction_two are fully used with status :spent
     assert_equal transaction_one.reload.available_points, 0
-    assert_equal transaction_one.reload.status, 'spent'
+    assert_equal transaction_one.reload.status, "spent"
     assert_equal transaction_two.reload.available_points, 0
-    assert_equal transaction_two.reload.status, 'spent'
-    
+    assert_equal transaction_two.reload.status, "spent"
+
     # transaction_three is partially spent
     expected_points = 200
     assert_equal transaction_three.reload.available_points, expected_points
-    assert_not_equal transaction_three.reload.status, 'spent'
+    assert_not_equal transaction_three.reload.status, "spent"
   end
 
   test "method#spend: Does nothing the point to be spent is more than the balance of wallet" do
@@ -70,11 +70,11 @@ class TransactionTest < ActiveSupport::TestCase
 
       # No points are used from the transactions as well
       assert_equal transaction_one.reload.available_points, transaction_one.points
-      assert_equal transaction_one.reload.status, 'completed'
+      assert_equal transaction_one.reload.status, "completed"
       assert_equal transaction_two.reload.available_points, transaction_two.points
-      assert_equal transaction_two.reload.status, 'completed'
+      assert_equal transaction_two.reload.status, "completed"
       assert_equal transaction_three.reload.available_points, transaction_three.points
-      assert_equal transaction_three.reload.status, 'completed'
+      assert_equal transaction_three.reload.status, "completed"
     end
   end
 
@@ -99,7 +99,7 @@ class TransactionTest < ActiveSupport::TestCase
     response = Transaction.balance_by_payers(wallet)
 
     assert_equal response.size, expected_balance_breakdown.size
-    assert_equal response['TEST_1'], expected_balance_breakdown['TEST_1']
-    assert_equal response['TEST_2'], expected_balance_breakdown['TEST_2']
+    assert_equal response["TEST_1"], expected_balance_breakdown["TEST_1"]
+    assert_equal response["TEST_2"], expected_balance_breakdown["TEST_2"]
   end
 end

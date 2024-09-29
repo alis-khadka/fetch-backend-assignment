@@ -7,7 +7,7 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_response :ok
-    assert_equal @response.parsed_body[:message], 'Welcome to wallet api.'
+    assert_equal @response.parsed_body[:message], "Welcome to wallet api."
   end
 
   test "#add: adds a transaction successfully" do
@@ -46,7 +46,7 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
     assert new_transaction
 
     # The transaction is still pending
-    assert_equal new_transaction.status, 'pending'
+    assert_equal new_transaction.status, "pending"
     assert_equal wallet.reload.balance, current_balance
   end
 
@@ -72,7 +72,7 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
     assert new_transaction
 
     # The transaction is completed
-    assert_equal new_transaction.status, 'completed'
+    assert_equal new_transaction.status, "completed"
     assert_not_equal wallet.reload.balance, current_balance
     assert_equal wallet.balance, current_balance + 200
   end
@@ -88,7 +88,7 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :bad_request
-    assert_equal 'Timestamp key is missing.', @response.parsed_body
+    assert_equal "Timestamp key is missing.", @response.parsed_body
   end
 
   test "#add: return error message if the timestamp is invalid" do
@@ -98,12 +98,12 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
       post points_add_url, params: {
         payer: "PEARL",
         points: 200,
-        timestamp: 'dsalkjflkkdjsfalk'
+        timestamp: "dsalkjflkkdjsfalk"
       }
     end
 
     assert_response :bad_request
-    assert_equal 'Invalid timestamp.', @response.parsed_body
+    assert_equal "Invalid timestamp.", @response.parsed_body
   end
 
   test "#add: return error message if payer is missing" do
@@ -117,7 +117,7 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :bad_request
-    assert_equal 'Payer is missing or empty.', @response.parsed_body
+    assert_equal "Payer is missing or empty.", @response.parsed_body
   end
 
   test "#add: return error message if payer is empty" do
@@ -125,14 +125,14 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
 
     assert_no_enqueued_jobs(only: TransactionJob) do
       post points_add_url, params: {
-        payer: '',
+        payer: "",
         points: 200,
         timestamp: DateTime.now.to_s
       }
     end
 
     assert_response :bad_request
-    assert_equal 'Payer is missing or empty.', @response.parsed_body
+    assert_equal "Payer is missing or empty.", @response.parsed_body
   end
 
   test "#add: return error message if points is missing" do
@@ -140,13 +140,13 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
 
     assert_no_enqueued_jobs(only: TransactionJob) do
       post points_add_url, params: {
-        payer: 'TEST',
+        payer: "TEST",
         timestamp: DateTime.now.to_s
       }
     end
 
     assert_response :bad_request
-    assert_equal 'Points is missing.', @response.parsed_body
+    assert_equal "Points is missing.", @response.parsed_body
   end
 
   test "#add: return error message if points is negative" do
@@ -154,14 +154,14 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
 
     assert_no_enqueued_jobs(only: TransactionJob) do
       post points_add_url, params: {
-        payer: 'TEST',
+        payer: "TEST",
         points: -200,
         timestamp: DateTime.now.to_s
       }
     end
 
     assert_response :bad_request
-    assert_equal 'Points value cannot be negative or zero.', @response.parsed_body
+    assert_equal "Points value cannot be negative or zero.", @response.parsed_body
   end
 
   test "#add: return error message if points is zero" do
@@ -169,14 +169,14 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
 
     assert_no_enqueued_jobs(only: TransactionJob) do
       post points_add_url, params: {
-        payer: 'TEST',
+        payer: "TEST",
         points: 0,
         timestamp: DateTime.now.to_s
       }
     end
 
     assert_response :bad_request
-    assert_equal 'Points value cannot be negative or zero.', @response.parsed_body
+    assert_equal "Points value cannot be negative or zero.", @response.parsed_body
   end
 
   test "#spend: succefully spends the points if it is less than or equal to the wallet balance" do
@@ -200,12 +200,12 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
     assert_response :ok
 
     expected_response = [
-      {"payer": "TEST_1", "points": -300},
-      {"payer": "TEST_2", "points": -100}
+      { "payer": "TEST_1", "points": -300 },
+      { "payer": "TEST_2", "points": -100 }
     ]
 
-    assert_equal expected_response.find { |item| item[:payer] == "TEST_1"}[:points], @response.parsed_body.find {|item| item["payer"] == "TEST_1"}["points"]
-    assert_equal expected_response.find { |item| item[:payer] == "TEST_2"}[:points], @response.parsed_body.find {|item| item["payer"] == "TEST_2"}["points"]
+    assert_equal expected_response.find { |item| item[:payer] == "TEST_1" }[:points], @response.parsed_body.find { |item| item["payer"] == "TEST_1" }["points"]
+    assert_equal expected_response.find { |item| item[:payer] == "TEST_2" }[:points], @response.parsed_body.find { |item| item["payer"] == "TEST_2" }["points"]
 
     # 400 has been deducted from the wallet after spending
     expected_balance = expected_balance - 400
@@ -213,14 +213,14 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
 
     # transaction_one and transaction_two are fully used with status :spent
     assert_equal transaction_one.reload.available_points, 0
-    assert_equal transaction_one.reload.status, 'spent'
+    assert_equal transaction_one.reload.status, "spent"
     assert_equal transaction_two.reload.available_points, 0
-    assert_equal transaction_two.reload.status, 'spent'
-    
+    assert_equal transaction_two.reload.status, "spent"
+
     # transaction_three is partially spent
     expected_points = 200
     assert_equal transaction_three.reload.available_points, expected_points
-    assert_not_equal transaction_three.reload.status, 'spent'
+    assert_not_equal transaction_three.reload.status, "spent"
   end
 
   test "#spend: return error message if points is missing" do
@@ -231,18 +231,18 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :bad_request
-    assert_equal 'Points is missing.', @response.parsed_body
+    assert_equal "Points is missing.", @response.parsed_body
   end
 
   test "#spend: return error message if points is not integer" do
     wallet = wallets(:one)
 
     perform_enqueued_jobs(at: DateTime.now) do
-      post points_spend_url, params: { points: 'dfas;' }
+      post points_spend_url, params: { points: "dfas;" }
     end
 
     assert_response :bad_request
-    assert_equal 'Points value should be integer.', @response.parsed_body
+    assert_equal "Points value should be integer.", @response.parsed_body
   end
 
   test "#spend: return error message if points is negative" do
@@ -253,7 +253,7 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :bad_request
-    assert_equal 'Points value cannot be negative or zero.', @response.parsed_body
+    assert_equal "Points value cannot be negative or zero.", @response.parsed_body
   end
 
   test "#spend: return error message if points is zero" do
@@ -264,7 +264,7 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :bad_request
-    assert_equal 'Points value cannot be negative or zero.', @response.parsed_body
+    assert_equal "Points value cannot be negative or zero.", @response.parsed_body
   end
 
   test "#spend: return error message if the provided points is more than the balance in wallet" do
@@ -275,7 +275,7 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :bad_request
-    assert_equal 'Insufficient points in the wallet.', @response.parsed_body
+    assert_equal "Insufficient points in the wallet.", @response.parsed_body
   end
 
   test "#balance: return the breakdown of points from distinct payers of completed and spent transactions" do
@@ -301,7 +301,7 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
     }.with_indifferent_access
 
     assert_equal expected_balance_breakdown.size, @response.parsed_body.size
-    assert_equal expected_balance_breakdown['TEST_1'], @response.parsed_body['TEST_1']
-    assert_equal expected_balance_breakdown['TEST_2'], @response.parsed_body['TEST_2']
+    assert_equal expected_balance_breakdown["TEST_1"], @response.parsed_body["TEST_1"]
+    assert_equal expected_balance_breakdown["TEST_2"], @response.parsed_body["TEST_2"]
   end
 end
