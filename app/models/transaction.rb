@@ -59,12 +59,16 @@ class Transaction < ApplicationRecord
     end
 
     def check_available_points_and_update_wallet_balance
+        # Update the wallet balance when
+        # 1. There is a change in the avialable_points of a transaction.
+        # 2. A transaction's status is completed
         if saved_change_to_attribute?('available_points') || (saved_change_to_attribute?('status') && completed?)
             ActiveRecord::Base.transaction do
                 self.wallet.update_total_balance
             end
         end
 
+        # Set the transaction's status to spent if the amount is fully used.
         if saved_change_to_attribute?('available_points') && self.available_points <= 0
             self.spent!
         end

@@ -1,5 +1,6 @@
 class PointsController < ApplicationController
     before_action :set_wallet, except: :home
+    before_action :validate_params, only: :add
 
     def home
         render json: { message: 'Welcome to wallet api.' }, status: :ok
@@ -44,5 +45,25 @@ class PointsController < ApplicationController
 
     def spend_points_params
         params.permit(:points)
+    end
+
+    def validate_params
+        begin
+            # Checking if timestamp is missing
+            raise TransactionErrors::TimestampMissing if !transaction_params[:timestamp]
+
+            # Checking if the timestamp value is parsable into datetime
+            # This will raise Date::Error if it is unparsable
+            DateTime.parse(transaction_params[:timestamp])
+
+            # Checking if payer is missing or empty
+            raise TransactionErrors::PayerMissingOrEmpty if !transaction_params[:payer] || transaction_params[:payer].empty?
+        rescue Date::Error => error
+            render plain: 'Invalid timestamp.', status: :bad_request and return
+        rescue TransactionErrors::TimestampMissing
+            render plain: 'Timestamp key is missing.', status: :bad_request and return
+        rescue TransactionErrors::PayerMissingOrEmpty
+            render plain: 'Payer is missing or empty.', status: :bad_request and return
+        end
     end
 end
