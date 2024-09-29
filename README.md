@@ -19,11 +19,9 @@ Welcome to **Wallet API**.
  - Now, to setup the database in development environment, open another terminal and run the following commands in order. This has to be done only once.  
  ```shell
  docker-compose run fetch-backend rails db:create
- ```  
- ````shell
+  
  docker-compose run fetch-backend rails db:migrate
- ```  
- ````shell
+  
  docker-compose run fetch-backend rails db:seed
  ```  
  - After the server is ready, you can visit your browser. The server runs in port 8000.  
@@ -35,6 +33,7 @@ Welcome to **Wallet API**.
  ```shell
  docker-compose run fetch-test rails db:create
  ```  
+
  ```shell
  docker-compose run fetch-test rails db:migrate
  ```  
