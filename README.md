@@ -2,7 +2,7 @@
   
 Welcome to **Wallet API**. 
   
-## Installation
+## Setup
   
  - Clone the repo and cd into the root directory.  
  `cd path/to/fetch-backend-assignment`  
@@ -10,6 +10,10 @@ Welcome to **Wallet API**.
  `docker-compose up`  
  - [Optional] You can attach the server in a separate terminal for better readability of the console logs.  
  `docker attach fetch-backend`  
+ - Now, to setup the database, open another terminal and run the following command.  
+ `docker-compose run fetch-backend rails db:create`  
+ `docker-compose run fetch-backend rails db:migrate`  
+ `docker-compose run fetch-backend rails db:seed`  
  - After the server is ready, you can visit your browser. The server runs in port 8000.  
  `localhost:8000`  
 
