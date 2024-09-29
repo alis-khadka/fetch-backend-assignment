@@ -37,7 +37,7 @@ class PointsController < ApplicationController
 
     private
     def set_wallet
-        @wallet = Wallet.find(params[:walled_id] || Wallet.first.id)
+        @wallet = Wallet.find(params[:wallet_id] || Wallet.first.id)
     end
 
     def transaction_params
@@ -50,12 +50,12 @@ class PointsController < ApplicationController
 
     def validate_transaction_params
         begin
+            # Checking if timestamp is missing
+            raise TransactionErrors::TimestampMissing if !transaction_params[:timestamp]
+
             # Checking if the timestamp value is parsable into datetime
             # This will raise Date::Error if it is unparsable
             DateTime.parse(transaction_params[:timestamp])
-
-            # Checking if timestamp is missing
-            raise TransactionErrors::TimestampMissing if !transaction_params[:timestamp]
 
             # Checking if payer is missing or empty
             raise TransactionErrors::PayerMissingOrEmpty if !transaction_params[:payer] || transaction_params[:payer].empty?
@@ -64,7 +64,7 @@ class PointsController < ApplicationController
             raise TransactionErrors::PointsMissing if !transaction_params[:points]
 
             # Checking if points is integer
-            raise TransactionErrors::InvalidPointsValue if transaction_params[:points].class != Integer
+            Integer(transaction_params[:points])
         rescue Date::Error => error
             render plain: 'Invalid timestamp.', status: :bad_request and return
         rescue TransactionErrors::TimestampMissing
@@ -73,7 +73,7 @@ class PointsController < ApplicationController
             render plain: 'Payer is missing or empty.', status: :bad_request and return
         rescue TransactionErrors::PointsMissing
             render plain: 'Points is missing.', status: :bad_request and return
-        rescue TransactionErrors::InvalidPointsValue
+        rescue TypeError, ArgumentError
             render plain: 'Points value should be integer.', status: :bad_request and return
         end
     end
@@ -81,13 +81,13 @@ class PointsController < ApplicationController
     def validate_spend_points_params
         begin
             # Checking if points is missing
-            raise TransactionErrors::PointsMissing if !transaction_params[:points]
+            raise TransactionErrors::PointsMissing if !spend_points_params[:points]
 
             # Checking if points is integer
-            raise TransactionErrors::InvalidPointsValue if transaction_params[:points].class != Integer
+            Integer(spend_points_params[:points])
         rescue TransactionErrors::PointsMissing
             render plain: 'Points is missing.', status: :bad_request and return
-        rescue TransactionErrors::InvalidPointsValue
+        rescue TypeError, ArgumentError
             render plain: 'Points value should be integer.', status: :bad_request and return
         end
     end

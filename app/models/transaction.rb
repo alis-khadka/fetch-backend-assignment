@@ -9,6 +9,8 @@ class Transaction < ApplicationRecord
     enum :status, { pending: 0, completed: 1, failed: 2, spent: 3 }
 
     def self.spend(points, wallet)
+        return if points > wallet.balance
+
         completed_transactions = wallet.transactions.where(status: :completed).order(timestamp: :asc)
 
         spent_points_by_payer = {}
@@ -45,6 +47,8 @@ class Transaction < ApplicationRecord
 
     private
     def process
+        return if !self.pending?
+
         if self.timestamp.future?
             TransactionJob.set(wait_until: self.timestamp).perform_later(self.id)
         else
@@ -75,6 +79,6 @@ class Transaction < ApplicationRecord
     end
 
     def update_available_points
-        self.available_points = self.points
+        self.available_points = self.points if !self.available_points
     end
 end

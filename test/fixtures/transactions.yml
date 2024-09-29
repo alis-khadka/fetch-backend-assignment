@@ -1,11 +1,84 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the "{}" from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-one: {}
-# column: value
-#
-two: {}
-# column: value
+# completed transactions
+one:
+  wallet: one
+  payer: 'HARRY'
+  points: 200
+  status: completed
+  available_points: 200
+  timestamp: <%= 1.hour.ago %>
+
+two:
+  wallet: one
+  payer: 'TOM'
+  points: 300
+  status: completed
+  available_points: 300
+  timestamp: <%= 5.minutes.ago %>
+
+three:
+  wallet: one
+  payer: 'HARRY'
+  points: 1500
+  status: completed
+  available_points: 1500
+  timestamp: <%= 1.hour.ago %>
+
+four:
+  wallet: one
+  payer: 'DANIEL'
+  points: 1000
+  status: completed
+  available_points: 1000
+  timestamp: <%= 1.hour.ago %>
+
+# pending transactions
+five:
+  wallet: one
+  payer: 'SELENA'
+  points: 700
+  status: pending
+  available_points: 700
+  timestamp: <%= DateTime.now + 1.hour %>
+
+six:
+  wallet: one
+  payer: 'TOM'
+  points: 200
+  status: pending
+  available_points: 200
+  timestamp: <%= DateTime.now + 30.minutes %>
+
+seven:
+  wallet: one
+  payer: 'DANIEL'
+  points: 300
+  status: pending
+  available_points: 300
+  timestamp: <%= DateTime.now + 1.hour %>
+
+# spent transactions
+eight:
+  wallet: one
+  payer: 'SELENA'
+  points: 700
+  status: spent
+  available_points: 0
+  timestamp: <%= 3.hours.ago %>
+
+nine:
+  wallet: one
+  payer: 'TOM'
+  points: 200
+  status: spent
+  available_points: 0
+  timestamp: <%= 3.hours.ago %>
+
+ten:
+  wallet: one
+  payer: 'DANIEL'
+  points: 300
+  status: spent
+  available_points: 0
+  timestamp: <%= 3.hours.ago %>
