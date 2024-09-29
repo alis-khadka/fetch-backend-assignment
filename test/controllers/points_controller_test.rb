@@ -149,6 +149,36 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Points is missing.', @response.parsed_body
   end
 
+  test "#add: return error message if points is negative" do
+    wallet = wallets(:one)
+
+    assert_no_enqueued_jobs(only: TransactionJob) do
+      post points_add_url, params: {
+        payer: 'TEST',
+        points: -200,
+        timestamp: DateTime.now.to_s
+      }
+    end
+
+    assert_response :bad_request
+    assert_equal 'Points value cannot be negative or zero.', @response.parsed_body
+  end
+
+  test "#add: return error message if points is zero" do
+    wallet = wallets(:one)
+
+    assert_no_enqueued_jobs(only: TransactionJob) do
+      post points_add_url, params: {
+        payer: 'TEST',
+        points: 0,
+        timestamp: DateTime.now.to_s
+      }
+    end
+
+    assert_response :bad_request
+    assert_equal 'Points value cannot be negative or zero.', @response.parsed_body
+  end
+
   test "#spend: succefully spends the points if it is less than or equal to the wallet balance" do
     wallet = Wallet.create!
     transaction_one = wallet.transactions.create(payer: "TEST_1", points: 100, timestamp: 3.hours.ago.to_s)
@@ -213,6 +243,28 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :bad_request
     assert_equal 'Points value should be integer.', @response.parsed_body
+  end
+
+  test "#spend: return error message if points is negative" do
+    wallet = wallets(:one)
+
+    perform_enqueued_jobs(at: DateTime.now) do
+      post points_spend_url, params: { points: -300 }
+    end
+
+    assert_response :bad_request
+    assert_equal 'Points value cannot be negative or zero.', @response.parsed_body
+  end
+
+  test "#spend: return error message if points is zero" do
+    wallet = wallets(:one)
+
+    perform_enqueued_jobs(at: DateTime.now) do
+      post points_spend_url, params: { points: 0 }
+    end
+
+    assert_response :bad_request
+    assert_equal 'Points value cannot be negative or zero.', @response.parsed_body
   end
 
   test "#spend: return error message if the provided points is more than the balance in wallet" do
