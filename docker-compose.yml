@@ -18,7 +18,7 @@ services:
     ports:
       - "5432:5432"
 
-  web:
+  fetch-backend:
     container_name: fetch-backend
     build:
       context: .
@@ -40,7 +40,7 @@ services:
     env_file:
       - .env.development
 
-  test:
+  fetch-test:
     container_name: fetch-test
     build:
       context: .
