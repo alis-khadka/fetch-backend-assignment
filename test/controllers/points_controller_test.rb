@@ -278,7 +278,7 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Insufficient points in the wallet.', @response.parsed_body
   end
 
-  test "#balance: return the breakdown of points from distinct payers of completed transactions" do
+  test "#balance: return the breakdown of points from distinct payers of completed and spent transactions" do
     wallet = Wallet.create!
     transaction_one = wallet.transactions.create(payer: "TEST_1", points: 100, timestamp: 3.hours.ago.to_s)
     transaction_two = wallet.transactions.create(payer: "TEST_1", points: 200, timestamp: 2.hours.ago.to_s)
@@ -295,6 +295,7 @@ class PointsControllerTest < ActionDispatch::IntegrationTest
     assert_response :ok
 
     expected_balance_breakdown = {
+      "HARRY": 0,
       "TEST_1": 100 + 200,
       "TEST_2": 300
     }.with_indifferent_access

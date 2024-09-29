@@ -39,7 +39,7 @@ class Transaction < ApplicationRecord
 
     def self.balance_by_payers(wallet)
         wallet.transactions
-            .where(status: :completed)
+            .where(status: [:completed, :spent])
             .group(:payer)
             .order(payer: :asc)
             .pluck(:payer, 'SUM(available_points)::int')

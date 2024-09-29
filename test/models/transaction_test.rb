@@ -78,7 +78,7 @@ class TransactionTest < ActiveSupport::TestCase
     end
   end
 
-  test "method#balance_by_payer: returns the balance in a wallet using breakdown of points from distinct payers of completed transactions only" do
+  test "method#balance_by_payer: returns the balance in a wallet using breakdown of points from distinct payers of completed and spent transactions only" do
     wallet = Wallet.create!
     transaction_one = wallet.transactions.create(payer: "TEST_1", points: 100, timestamp: 3.hours.ago.to_s)
     transaction_two = wallet.transactions.create(payer: "TEST_1", points: 200, timestamp: 2.hours.ago.to_s)
@@ -91,6 +91,7 @@ class TransactionTest < ActiveSupport::TestCase
     perform_enqueued_jobs(at: DateTime.now)
 
     expected_balance_breakdown = {
+      "HARRY": 0,
       "TEST_1": 100 + 200,
       "TEST_2": 300
     }.with_indifferent_access
