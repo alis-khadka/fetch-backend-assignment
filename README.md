@@ -7,16 +7,26 @@ Welcome to **Wallet API**.
  - Clone the repo and cd into the root directory.  
  `cd path/to/fetch-backend-assignment`  
  - Build the docker image from a terminal. This will setup the database (PostgreSQL) and server (rails application).  
- `docker-compose up`  
+ `docker-compose up --build`  
  - [Optional] You can attach the server in a separate terminal for better readability of the console logs.  
  `docker attach fetch-backend`  
- - Now, to setup the database, open another terminal and run the following command.  
+ - Now, to setup the database in development environment, open another terminal and run the following commands in order. This has to be done only once.  
  `docker-compose run fetch-backend rails db:create`  
  `docker-compose run fetch-backend rails db:migrate`  
  `docker-compose run fetch-backend rails db:seed`  
  - After the server is ready, you can visit your browser. The server runs in port 8000.  
  `localhost:8000`  
-
+  
+## Running Test Files
+  
+- Open another terminal and run the following commands in order. This has to be done only once.  
+ `docker-compose run fetch-test rails db:create`  
+ `docker-compose run fetch-test rails db:migrate`  
+ `docker-compose run fetch-test rails db:seed`  
+- To run all test cases.  
+ `docker-compose run fetch-test rails test`  
+- To run a specific test file.  
+ `docker-compose run fetch-test rails test path/to/file`  
 
 ## Explanation  
   
