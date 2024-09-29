@@ -72,6 +72,6 @@ Welcome to **Wallet API**.
 
 ## Note
   
-- A file titled **fetch-backend.postman_collection.json** can be found in the root directory of the project. This is  a postman collection of the different api requests for this **Wallet API** which can be imported into the Postman.  
-- A file **summary.txt** can be found in the root directory of the project with some QnAs.  
+- A file titled **[fetch-backend.postman_collection.json](./fetch-backend.postman_collection.json)** can be found in the root directory of the project. This is  a postman collection of the different api requests for this **Wallet API** which can be imported into the Postman.  
+- A file **[summary.txt](./summary.txt)** can be found in the root directory of the project with some QnAs.  
 
