@@ -17,12 +17,11 @@ class Transaction < ApplicationRecord
         points_available = points
 
         ActiveRecord::Base.transaction do
-            completed_transactions.each do |transaction|
+            completed_transactions.find_each(batch_size: 500) do |transaction|
                 break if points_available <=0
 
                 deduction = [points_available, transaction.available_points].min
-                transaction.update(available_points: transaction.available_points - deduction)
-
+                transaction.available_points -= deduction
                 points_available -= deduction
 
                 if spent_points_by_payer[transaction.payer]
@@ -30,6 +29,8 @@ class Transaction < ApplicationRecord
                 else
                     spent_points_by_payer[transaction.payer] = deduction
                 end
+
+                transaction.save!
             end
         end
 
@@ -73,7 +74,7 @@ class Transaction < ApplicationRecord
         end
 
         # Set the transaction's status to spent if the amount is fully used.
-        if saved_change_to_attribute?('available_points') && self.available_points <= 0
+        if saved_change_to_attribute?('available_points') && self.available_points <= 0 && !spent?
             self.spent!
         end
     end
