@@ -8,6 +8,7 @@ Welcome to **Wallet API**.
  ```shell
  cd path/to/fetch-backend-assignment
  ```  
+ - Install docker if it is not available in your system. [MacOS](https://docs.docker.com/desktop/install/mac-install/) / [Windows](https://docs.docker.com/desktop/install/windows-install/) / [Linux](https://docs.docker.com/desktop/install/linux/)
  - Build the docker image from a terminal. This will setup the database (PostgreSQL) and server (rails application).  
  ```shell
  docker-compose up --build
