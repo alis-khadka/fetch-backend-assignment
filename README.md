@@ -25,7 +25,7 @@ Welcome to **Wallet API**.
  docker-compose run fetch-backend rails db:seed
  ```  
  - After the server is ready, you can visit your browser. The server runs in port 8000.  
- **[localhost:8000](localhost:8000)**  
+ **localhost:8000**  
   
 ## Running Test Files
   
@@ -61,7 +61,8 @@ Welcome to **Wallet API**.
  2.  POST /spend  
 		 Sample request body:  
 		 ```JSON
-		 { "points": 5000 }```  
+		 { "points": 5000 }
+		 ```  
  3.  GET /balance  
 		 No request body required.  
 
