@@ -56,16 +56,16 @@ Welcome to **Wallet API**.
  1.  POST /add  
 		Sample request body:  
  
-		```
+		```json
 		{ "payer": "HARRY", "points": 500, "timestamp" : "2020-11-02T14:00:00Z" }
 		```  
 
  2.  POST /spend  
 		 Sample request body:   
 
-		 ```
-		 { "points": 5000 }
-		 ```  
+		```json
+		{ "points": 5000 }
+		```  
  3.  GET /balance  
 		 No request body required.  
 
