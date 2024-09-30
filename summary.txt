@@ -6,33 +6,54 @@
     - It provides built-in support for handling RESTful APIs, ActiveRecord (ORM of rails), and ActiveJob (Background Job handler of rails).
     - ActiveRecord simplifies queries like group, where, sum, and transaction block, which has been used in this exercise.
     - ActiveJob has been used to schedule background jobs for commiting the pending transaction as completed in the provided future timestamp.
-    - Enum has been used for easy management of the different states (pending, completed, failed, spent) of "status" of a "transaction". The enum is stored as an integer in the database.
-    - ActiveRecord Callbacks has been used to ensure data integrity between "wallet" and "transaction". The "before_create" callback ensures that available_points is correctly initialized whenever a new "transaction" is created. The "after_commit" callback ensures that a "transaction" is set to "spent" if all the "available_points" is fully used and also updates the total balance in the "wallet".
+    - Enum has been used for easy management of the different states (pending, completed, failed, spent) of "status" of a "transaction".
+      The enum is stored as an integer in the database.
+    - ActiveRecord Callbacks has been used to ensure data integrity between "wallet" and "transaction". The "before_create" callback ensures 
+      that available_points is correctly initialized whenever a new "transaction" is created. The "after_commit" callback ensures that a 
+      "transaction" is set to "spent" if all the "available_points" is fully used and also updates the total balance in the "wallet".
 
     PostgreSQL:
     - It is suited for handling complex queries and is flexible with the data types like JSON, arrays.
 
 2. What are the advantages and disadvantages of your solution?
 => Advantages:
-    - The "Wallet" model has a "has_many" relation with "Transaction" model. This leaves room for future scaling where multiple wallets can be linked to different users (not implemented yet).
-    - ActiveJob handles future transactions asynchronously through background job. This is crucial for allowing other time sensitive computations in real time.
+    - The "Wallet" model has a "has_many" relation with "Transaction" model. This leaves room for future scaling where multiple wallets 
+      can be linked to different users (not implemented yet).
+    - ActiveJob handles future transactions asynchronously through background job. This is crucial for allowing other time sensitive 
+      computations in real time.
     - Usage of enums for "status" of a "transaction" simplifies its state management.
     - By wrapping certain logic (code blocks) in "ActiveRecord::Base.transaction", it ensures that all changes inside the code block is atomic.
 
 => Disadvantages:
-    - Although "transactions" with future timestamp are handled through background job, there might be some scenarios where such "transactions" needs to be modified or cancelled. This will require additional logic to be implemented.
+    - Although "transactions" with future timestamp are handled through background job, there might be some scenarios where such "transactions" 
+      needs to be modified or cancelled. This will require additional logic to be implemented.
     - The immediate "transactions" are handled synchronously. This might slow down the server under high load.
     - The current implementation assumes a single user. Scaling the system to handle multiple users would require further implementations.
-    - The current implementation depends upon custom validations (on the Rails Model side) mostly for data integrity like updating the wallet's balance when a transaction is completed or some points have been spent. This can be improved with implementing constraints from the database level.
+    - The current implementation depends upon custom validations (on the Rails Model side) mostly for data integrity like updating the 
+      wallet's balance when a transaction is completed or some points have been spent. This can be improved with implementing constraints 
+      from the database level.
 
 3. What has been a favorite school/personal project thus far? What about it that challenged you?
 => I would like to talk about a open source project contribution (Violet Rails).
 
     Violet Rails:
-        It is a web automation platform that provides CMS, blog, forum and email functionality. Regarding the email functionality, it had a bug where the email messages from different threads (subject) were mapped onto a single thread. Here, "thread" refers to a email subject and "messages" refers to the different email conversations under a email subject. In order to analyze this problem and to come up with solution, I went through the different standard email header that are in practice as well as the ones being used in Violet Rails. Below are the things I discovered;
-        - I found that the "message-id" header's value, that was being generated in Violet Rails, has multiple "@" which did not comply with the RFC format. Due to this, the email that was being send from Violet Rails, its "message-id" was being changed to the standard format by gmail afterwards.
-        - Suppose there is a email subject: 'Test thread'. When we reply to this thread from gmail, the subject would be "Re: Test thread". When it is forwarded, the subject would be "Fwd: Test Thread". Due to this, they were being mapped into different email thread in our case.
+        It is a web automation platform that provides CMS, blog, forum and email functionality.
+        Regarding the email functionality, it had a bug where the email messages from different
+        threads (subject) were mapped onto a single thread. Here, "thread" refers to a email subject and
+        "messages" refers to the different email conversations under a email subject. In order to analyze this
+        problem and to come up with solution, I went through the different standard email header that are in
+        practice as well as the ones being used in Violet Rails. Below are the things I discovered;
+
+        - I found that the "message-id" header's value, that was being generated in Violet Rails, has multiple "@" which did not
+          comply with the RFC format. Due to this, the email that was being send from Violet Rails, its "message-id" was being
+          changed to the standard format by gmail afterwards.
+
+        - Suppose there is a email subject: 'Test thread'. When we reply to this thread from gmail, the subject would be "Re: Test thread".
+          When it is forwarded, the subject would be "Fwd: Test Thread". Due to this, they were being mapped into different email thread in our case.
+
         - Gmail uses 'in-reply-to' and 'references' headers for email threading. These headers were missing when an email was sent from Violet Rails' mailbox.
-        - In case of Github notification emails, their emails have same value for 'in-reply-to' and 'references' headers in all emails of their thread. This case has been handled too.
+
+        - In case of Github notification emails, their emails have same value for 'in-reply-to' and 'references' headers in all emails of their thread.
+          This case has been handled too.
 
         After making changes, the email functionality worked properly. Here is the PR link for this: https://github.com/restarone/violet_rails/pull/1295/files
